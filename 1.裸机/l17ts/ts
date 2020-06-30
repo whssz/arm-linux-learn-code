@@ -1,0 +1,69 @@
+================触摸屏工作原理
+1.功能和分类
+ 	输入设备
+ 	电阻式    ad转换    电压比，2.3/5 求出x， y
+ 	电容式    灵敏，多点触摸   手指形成电流，四个电极发生变化。
+ 	
+ 	
+=================电阻屏驱动设计
+初始化ts：
+	1.设置ad转换时钟
+           ADCCON	 14bit   使能预分频
+                     6-13bit 设置ad转换时钟                 
+ 	2.设置中断屏蔽
+ 	       INTMASK  ： 31bit  使能adc中断，总中断
+ 	       INTSUBMAK ； 9bit   TC子中断  
+           TC   中断, 使能tc中断
+           ADC  中断，屏蔽adc中断
+	3.进入等待中断模式
+		  ADXTSC :  0bit 
+		  			8bit 等待中断 0xd3
+
+
+中断处理函数：	
+
+1. 启动x，y坐标的自动转换         
+          ADCTSC ： 2bit  自动转换x，y坐标
+          ADCCON ： 0bit  开启ad转换
+2. 等待转换完成
+          ADCCON ： 15bit 转换完成标志        
+3.获取坐标
+		  ADCDAT0 ： 0-9  X坐标 
+		  ADCDAT1 ： 0-9  Y坐标
+4.清除按下中断
+		  SUBSRCPND ： 9bit
+		  SRCPND ： 31bit
+		  INTPND ： 31bit
+5.进入等待弹起中断状态
+ 		 ADCTSC ： 0Xd3
+                   8bit  =1 ；		 
+6.清除弹起中断     
+          SUBSRCPND ： 9bit
+		  SRCPND ： 31bit
+		  INTPND ： 31bit
+7.进入等待按下中断状态
+          ADXTSC :  0bit 
+		  			8bit 等待中断 0xd3
+
+
+
+
+
+
+
+	  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  

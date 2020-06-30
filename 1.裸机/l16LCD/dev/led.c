@@ -1,0 +1,27 @@
+#define GPBCON (volatile unsigned long*)0x56000010
+#define GPBDAT (volatile unsigned long*)0x56000014
+
+void led_init()
+{ 
+   *(GPBCON) = 0x400; 
+   *(GPBDAT) = 0X7ff; 	
+}
+
+
+void led_on()
+{
+   *(GPBDAT) = 0x0;
+}
+
+void led_off()
+{
+   *(GPBDAT) = 0x7ff;	
+}
+
+void led_rever()
+{
+   if(*(GPBDAT) == 0x0)	
+    *(GPBDAT) = 0x7ff;
+   else
+   *(GPBDAT) == 0x0;
+}

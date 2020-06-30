@@ -1,0 +1,209 @@
+
+start.elf:     file format elf32-littlearm
+
+Disassembly of section .text:
+
+30000000 <_start>:
+.word 0xff
+.text
+.global _start
+_start:
+@伪指令
+nop
+30000000:	e1a00000 	nop			(mov r0,r0)
+.equ DA, 0X55
+mov r1, #DA
+30000004:	e3a01055 	mov	r1, #85	; 0x55
+mov r2, #0xff
+30000008:	e3a020ff 	mov	r2, #255	; 0xff
+ldr r2, =0xfff
+3000000c:	e59f208c 	ldr	r2, [pc, #140]	; 300000a0 <func1+0x64>
+@b分支
+	mov r0, #1
+30000010:	e3a00001 	mov	r0, #1	; 0x1
+	mov r1, #2
+30000014:	e3a01002 	mov	r1, #2	; 0x2
+	cmp r0, r1
+30000018:	e1500001 	cmp	r0, r1
+	bgt branch1
+3000001c:	ca000001 	bgt	30000028 <branch1>
+	add r3, r1, r0
+30000020:	e0813000 	add	r3, r1, r0
+	b end
+30000024:	ea000000 	b	3000002c <end>
+
+30000028 <branch1>:
+	branch1:
+	sub r3, r1, r0
+30000028:	e0413000 	sub	r3, r1, r0
+
+3000002c <end>:
+	end:
+	nop
+3000002c:	e1a00000 	nop			(mov r0,r0)
+@bl分支
+   mov r0, #1
+30000030:	e3a00001 	mov	r0, #1	; 0x1
+   mov r1, #2
+30000034:	e3a01002 	mov	r1, #2	; 0x2
+   bl func1
+30000038:	ebffffff 	bl	3000003c <func1>
+
+3000003c <func1>:
+   func1:
+   add r3, r0, r1
+3000003c:	e0803001 	add	r3, r0, r1
+   mov pc, lr
+30000040:	e1a0f00e 	mov	pc, lr
+@cmp比较，不储存结果，但是会影响cpsr寄存器 <0N置1 =0Z置1
+    mov r0, #0x2
+30000044:	e3a00002 	mov	r0, #2	; 0x2
+    mov r1, #0x5
+30000048:	e3a01005 	mov	r1, #5	; 0x5
+    cmp r0, r1
+3000004c:	e1500001 	cmp	r0, r1
+@tst按位与，如果结果为0，Z置1
+	mov r1, r1, lsr #2
+30000050:	e1a01121 	lsr	r1, r1, #2
+	tst r0, r1
+30000054:	e1100001 	tst	r0, r1
+@lsl逻辑左移,lsr逻辑右移
+	mov r0, #0b1
+30000058:	e3a00001 	mov	r0, #1	; 0x1
+	mov r1, #2
+3000005c:	e3a01002 	mov	r1, #2	; 0x2
+	mov r0, r0, lsl #1
+30000060:	e1a00080 	lsl	r0, r0, #1
+	mov r0, r0, lsr #1
+30000064:	e1a000a0 	lsr	r0, r0, #1
+	orr r0, r0, r1
+30000068:	e1800001 	orr	r0, r0, r1
+@ror循环右移
+	mov r0, r0, ror  r1
+3000006c:	e1a00170 	ror	r0, r0, r1
+
+@mvn取反赋值
+	mvn r1, #5
+30000070:	e3e01005 	mvn	r1, #5	; 0x5
+	mvn r2, #0b10
+30000074:	e3e02002 	mvn	r2, #2	; 0x2
+    mvn r3, #0x8
+30000078:	e3e03008 	mvn	r3, #8	; 0x8
+@orr逻辑或
+	mov r1, #0b1
+3000007c:	e3a01001 	mov	r1, #1	; 0x1
+	mvn r2, r2
+30000080:	e1e02002 	mvn	r2, r2
+	orr r1, r1, r2
+30000084:	e1811002 	orr	r1, r1, r2
+@sub减法
+	mov r1, #5
+30000088:	e3a01005 	mov	r1, #5	; 0x5
+	mov r2, #4
+3000008c:	e3a02004 	mov	r2, #4	; 0x4
+	sub r1, r1, r2
+30000090:	e0411002 	sub	r1, r1, r2
+
+
+
+
+
+	mov r1,#1
+30000094:	e3a01001 	mov	r1, #1	; 0x1
+	mov r2,#2
+30000098:	e3a02002 	mov	r2, #2	; 0x2
+	mov r3,#3
+3000009c:	e3a03003 	mov	r3, #3	; 0x3
+300000a0:	00000fff 	.word	0x00000fff
+Disassembly of section .data:
+
+300080b0 <__data_start>:
+300080b0:	6c6c6568 	.word	0x6c6c6568
+300080b4:	726f776f 	.word	0x726f776f
+300080b8:	0000646c 	.word	0x0000646c
+300080bc:	00000000 	.word	0x00000000
+
+300080c0 <bh>:
+300080c0:	01          	.byte	0x01
+
+300080c1 <ADD>:
+300080c1:	ff          	.byte	0xff
+	...
+Disassembly of section .debug_aranges:
+
+00000000 <.debug_aranges>:
+   0:	0000001c 	andeq	r0, r0, ip, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00040000 	andeq	r0, r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	30000000 	andcc	r0, r0, r0
+  14:	000000a4 	andeq	r0, r0, r4, lsr #1
+	...
+Disassembly of section .debug_info:
+
+00000000 <.debug_info>:
+   0:	00000049 	andeq	r0, r0, r9, asr #32
+   4:	00000002 	andeq	r0, r0, r2
+   8:	01040000 	tsteq	r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	30000000 	andcc	r0, r0, r0
+  14:	300000a4 	andcc	r0, r0, r4, lsr #1
+  18:	72617473 	rsbvc	r7, r1, #1929379840	; 0x73000000
+  1c:	00532e74 	subseq	r2, r3, r4, ror lr
+  20:	6d6f682f 	stclvs	8, cr6, [pc, #-188]!
+  24:	33532f65 	cmpcc	r3, #404	; 0x194
+  28:	4d52412d 	ldfmie	f4, [r2, #-180]
+  2c:	7261702f 	rsbvc	r7, r1, #47	; 0x2f
+  30:	4c2f3174 	stfmis	f3, [pc], #-464
+  34:	49535345 	ldmdbmi	r3, {r0, r2, r6, r8, r9, ip, lr}^
+  38:	00334e4f 	eorseq	r4, r3, pc, asr #28
+  3c:	20554e47 	subscs	r4, r5, r7, asr #28
+  40:	32205341 	eorcc	r5, r0, #67108865	; 0x4000001
+  44:	2e38312e 	rsfcsep	f3, f0, #0.5
+  48:	01003035 	tsteq	r0, r5, lsr r0
+  4c:	Address 0x0000004c is out of bounds.
+
+Disassembly of section .debug_abbrev:
+
+00000000 <.debug_abbrev>:
+   0:	10001101 	andne	r1, r0, r1, lsl #2
+   4:	12011106 	andne	r1, r1, #-2147483647	; 0x80000001
+   8:	1b080301 	blne	200c14 <DA+0x200bbf>
+   c:	13082508 	movwne	r2, #34056	; 0x8508
+  10:	00000005 	andeq	r0, r0, r5
+Disassembly of section .debug_line:
+
+00000000 <.debug_line>:
+   0:	0000005c 	andeq	r0, r0, ip, asr r0
+   4:	001e0002 	andseq	r0, lr, r2
+   8:	01020000 	tsteq	r2, r0
+   c:	000d0efb 	strdeq	r0, [sp], -fp
+  10:	01010101 	tsteq	r1, r1, lsl #2
+  14:	01000000 	tsteq	r0, r0
+  18:	00010000 	andeq	r0, r1, r0
+  1c:	72617473 	rsbvc	r7, r1, #1929379840	; 0x73000000
+  20:	00532e74 	subseq	r2, r3, r4, ror lr
+  24:	00000000 	andeq	r0, r0, r0
+  28:	00020500 	andeq	r0, r2, r0, lsl #10
+  2c:	03300000 	teqeq	r0, #0	; 0x0
+  30:	2f30010c 	svccs	0x0030010c
+  34:	2f2f302f 	svccs	0x002f302f
+  38:	302f2f2f 	eorcc	r2, pc, pc, lsr #30
+  3c:	2f2f3030 	svccs	0x002f3030
+  40:	2f302f30 	svccs	0x00302f30
+  44:	302f302f 	eorcc	r3, pc, pc, lsr #32
+  48:	2f2f2f2f 	svccs	0x002f2f2f
+  4c:	2f2f3130 	svccs	0x002f3130
+  50:	302f2f30 	eorcc	r2, pc, r0, lsr pc
+  54:	12032f2f 	andne	r2, r3, #188	; 0xbc
+  58:	022f2f2e 	eoreq	r2, pc, #184	; 0xb8
+  5c:	01010004 	tsteq	r1, r4
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00001741 	andeq	r1, r0, r1, asr #14
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000000d 	andeq	r0, r0, sp
+  10:	00543405 	subseq	r3, r4, r5, lsl #8
+  14:	01080206 	tsteq	r8, r6, lsl #4

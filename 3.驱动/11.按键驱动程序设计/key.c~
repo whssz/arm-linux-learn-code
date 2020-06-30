@@ -1,0 +1,179 @@
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/miscdevice.h>
+#include <linux/fs.h>
+#include <linux/interrupt.h>
+#include <linux/io.h>
+#include <asm/uaccess.h>
+#include <linux/kthread.h>
+#include <linux/platform_device.h>
+
+//#include "linux/sched.h"
+
+
+
+
+
+#define GPGCON  0x56000060
+#define GPGDAT  0x56000064
+
+unsigned int *gpio_data;
+unsigned int key_num = 0;
+
+static struct work_struct *work1;
+static struct work_struct *work2;
+
+//wait_queue_head_t key_queue;
+static DECLARE_WAIT_QUEUE_HEAD(key_queue);
+
+static struct timer_list key_timer;
+
+
+
+
+void key_timer_func(unsigned long data)
+{  
+   unsigned int key_data;
+  
+   key_data = readw(gpio_data)&0x1; 
+   // printk("yes\n");
+   if(0 == key_data)
+      // printk("key1 was down!\n");
+      key_num = 1;
+     
+   
+   key_data = readw(gpio_data)&0x8; 
+   // printk("yes\n");
+   if(0 == key_data)
+       //printk("key2 was down!\n"); 
+        key_num = 2;
+  
+   wake_up(&key_queue); //产生了中断, 唤醒进程
+       	
+}
+
+static void work1_func(struct work_struct *work)
+{  
+    //启动定时器,定时100ms
+    mod_timer(&key_timer, jiffies + (HZ/10));
+}
+
+
+void work2_func(struct work_struct *work)
+{
+    printk("the work2!\n");
+}
+
+
+irqreturn_t key_int(int irq, void *dev_id)
+{
+    /*判断是否产生中断*/
+    
+    /*清除中断标志位*/
+    
+    /*打印按键号*/
+   // printk("the interrpt is occur!\n");
+   
+   // schedule_work(work2);
+   /*启动定时器*/
+    schedule_work(work1);
+    
+    return IRQ_HANDLED;
+}
+
+
+void key_hw_init()
+{    
+    unsigned int *gpio_config;
+    unsigned short data;
+    /*IO口模式设置*/
+    gpio_config = ioremap(GPGCON, 4);
+    data = readw(gpio_config); //读出寄存器里面的值
+    data &= ~0xc3;   //清0 最低两位
+    data |= 0x82;   //设置为10
+    writew(data, gpio_config);	
+    
+    gpio_data = ioremap(GPGDAT, 4); //数据寄存器的地址转换
+}
+
+
+ssize_t key_read(struct file *filp, char __user *buf, size_t size, loff_t *pos)
+{   
+    /*判断是否需要入等待序列*/
+    //wait_event(key_queue, key_num);
+    
+    //printk("don't wait!\n");
+    copy_to_user(buf, &key_num, 4);
+    
+    key_num = 0;
+    printk("the key_num is %d\n", key_num);
+    return 4;
+}
+int key_open(struct inode *node, struct file *filp)
+{
+    return 0;	
+}
+
+struct file_operations key_fops=
+{
+    .open = key_open,	
+    .read = key_read,
+};
+
+struct miscdevice key_miscdev=
+{
+    .minor = 200,
+    .name = "key",
+    .fops = &key_fops,	
+};
+
+
+static int key_init()
+{
+    misc_register(&key_miscdev);  //注册miscdevice
+    
+    key_hw_init(); //按键硬件初始化
+    
+    request_irq(IRQ_EINT8, key_int, IRQF_TRIGGER_FALLING, "key", 0);  //注册中断
+    request_irq(IRQ_EINT11, key_int, IRQF_TRIGGER_FALLING, "key", 0);  //注册中断
+   
+    //为工作描述分配一段内存
+    work1 = kmalloc(sizeof(struct work_struct), GFP_KERNEL); //GFP_KERNEL是内核内存分配时最常用的，无内存可用时可引起休眠
+    INIT_WORK(work1, work1_func);
+    /*挂载工作*/
+    //queue_work(work_queue, work1);
+   
+    /*创建工作*/
+    //为工作描述分配一段内存
+    work2 = kmalloc(sizeof(struct work_struct), GFP_KERNEL);
+    INIT_WORK(work2, work2_func);
+    /*挂载工作*/
+    // queue_work(work_queue, work2);
+    
+    /*初始化定时器,并定义超时函数*/
+    init_timer(&key_timer);
+    key_timer.function = key_timer_func;
+    
+    /*注册定时器*/
+    add_timer(&key_timer);
+    
+    /*定义等待序列*/
+    
+    /*初始化等待队列*/
+    // init_waitqueue_head(&key_queue); 
+
+    return 0;	
+}
+
+static void key_exit()
+{
+   misc_deregister(&key_miscdev) ; //注销混杂设备
+   
+   free_irq(IRQ_EINT8, 0);	//注销中断
+}
+
+
+
+MODULE_LICENSE("GPL");  //支持GPL开源协议
+module_init(key_init);
+module_exit(key_exit);

@@ -1,0 +1,94 @@
+===============lcd工作原理
+1.lcd驱动芯片  为液晶提供偏转电压
+2.lcd控制器    为驱动芯片提供应该偏转多少的信号，一般在arm处理去里面有。
+液晶是一种有机化合物，电压会使其偏转，有一个背光灯，所以能产生不同的像素点。
+
+
+==============lcd显示过程
+时序信号： 
+		VSYNC：显示一帧的时间间隔
+		HSYNC：显示一行的时间间隔
+		VLCK： 两个像素点的时间间隔
+		VDEN： lcd使能
+		LEND： 结束一行的显示
+		VD[23：0]：显示数据
+		
+===============2440LCD驱动程序
+1.LCD初始化
+   1.1 引脚初始化  VD
+   1.2 时序信号初始化
+   			VSPW	LCDCON2   垂直同步信号的时间
+   			VBPD    LCDCON2   垂直同步信号后的无效行数
+   			LINEVAL LCDCON2   一行的列数
+   			VFPD	LCDCON2   垂直同步信号前的无效行数
+   			VCLK    LCDCON1	  像素点之间的时间间隔
+   			HSPW    LCDCON4   水平同步信号的时间
+   			HBPD    LCDCON3   水平同步信号后的无效vclk数
+   			HOZVAL	LCDCON3   行数
+   			HFPD	LCDCON3   水平同步信号前的无效vclk数
+            通过lcd芯片手册去算出每个值的大小	
+            
+   	 1.3  2440lcd的缓冲区的初始化，2个字节一个像素点
+   	 	  LCDSADDR1  缓冲区起始地址
+   	 	  LCDSADDR2  结束地址
+   	 	  LCDSADDR3  offsize：  0，每一行之间的时间间隔
+   	 	  			 pagewidth： 宽度，以半字为单位，字节数/2 
+   	1.4  杂项初始化
+   	 	 LCDCON1   PNRMODE   选择屏幕类型
+   	 	 		   BPPMODE   16灰度级
+   	 	 		   ENVID     暂时不打开lcd控制器
+   	 	 LCDCON5   FRM565    颜色的分类， 红绿蓝三原色  5 6 5   	 	 		   			   INVVLINE  lcd的极性，行极性
+   	 	 		   INVVFRAME lcd的极性，帧极性
+   	 	 		   HWSWP     半字转换
+   	 	 TPAL	             临时调速板关闭,用于清屏	
+   	 	 
+=================================图像显示
+
+1. 打开各种开关   
+	  GPGCON   引脚开关
+	  LCDCON5  开关
+	  LCDCON1  控制器开关
+   	 	 		   
+
+   
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

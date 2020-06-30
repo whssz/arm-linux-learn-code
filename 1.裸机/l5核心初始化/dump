@@ -1,0 +1,166 @@
+
+gboot.elf:     file format elf32-littlearm
+
+Disassembly of section .text:
+
+30008000 <_start>:
+.text 
+.global _start
+_start:
+
+b   reset
+30008000:	ea000014 	b	30008058 <reset>
+ldr pc, _undefined_instruction
+30008004:	e59ff014 	ldr	pc, [pc, #20]	; 30008020 <_undefined_instruction>
+ldr pc, _software_interrupt
+30008008:	e59ff014 	ldr	pc, [pc, #20]	; 30008024 <_software_interrupt>
+ldr pc, _prefetch_abort
+3000800c:	e59ff014 	ldr	pc, [pc, #20]	; 30008028 <_prefetch_abort>
+ldr pc, _date_abort
+30008010:	e59ff014 	ldr	pc, [pc, #20]	; 3000802c <_date_abort>
+ldr pc, _not_used
+30008014:	e59ff014 	ldr	pc, [pc, #20]	; 30008030 <_not_used>
+ldr pc, _IRQ
+30008018:	e59ff014 	ldr	pc, [pc, #20]	; 30008034 <_IRQ>
+ldr pc, _FIQ
+3000801c:	e59ff014 	ldr	pc, [pc, #20]	; 30008038 <_FIQ>
+
+30008020 <_undefined_instruction>:
+30008020:	3000803c 	.word	0x3000803c
+
+30008024 <_software_interrupt>:
+30008024:	30008040 	.word	0x30008040
+
+30008028 <_prefetch_abort>:
+30008028:	30008044 	.word	0x30008044
+
+3000802c <_date_abort>:
+3000802c:	30008048 	.word	0x30008048
+
+30008030 <_not_used>:
+30008030:	3000804c 	.word	0x3000804c
+
+30008034 <_IRQ>:
+30008034:	30008050 	.word	0x30008050
+
+30008038 <_FIQ>:
+30008038:	30008054 	.word	0x30008054
+
+3000803c <undefined_instruction>:
+_IRQ :.word IRQ
+_FIQ :.word FIQ
+
+
+undefined_instruction:
+	nop	
+3000803c:	e1a00000 	nop			(mov r0,r0)
+
+30008040 <software_interrupt>:
+software_interrupt:
+	nop
+30008040:	e1a00000 	nop			(mov r0,r0)
+
+30008044 <prefetch_abort>:
+prefetch_abort:
+	nop
+30008044:	e1a00000 	nop			(mov r0,r0)
+
+30008048 <date_abort>:
+date_abort:
+	nop
+30008048:	e1a00000 	nop			(mov r0,r0)
+
+3000804c <not_used>:
+not_used:
+	nop
+3000804c:	e1a00000 	nop			(mov r0,r0)
+
+30008050 <IRQ>:
+IRQ:
+	nop
+30008050:	e1a00000 	nop			(mov r0,r0)
+
+30008054 <FIQ>:
+FIQ:
+	nop
+30008054:	e1a00000 	nop			(mov r0,r0)
+
+30008058 <reset>:
+reset:
+	nop
+30008058:	e1a00000 	nop			(mov r0,r0)
+Disassembly of section .ARM.attributes:
+
+00000000 <.ARM.attributes>:
+   0:	00001741 	andeq	r1, r0, r1, asr #14
+   4:	61656100 	cmnvs	r5, r0, lsl #2
+   8:	01006962 	tsteq	r0, r2, ror #18
+   c:	0000000d 	andeq	r0, r0, sp
+  10:	00543405 	subseq	r3, r4, r5, lsl #8
+  14:	01080206 	tsteq	r8, r6, lsl #4
+Disassembly of section .debug_line:
+
+00000000 <.debug_line>:
+   0:	00000042 	andeq	r0, r0, r2, asr #32
+   4:	001e0002 	andseq	r0, lr, r2
+   8:	01020000 	tsteq	r2, r0
+   c:	000d0efb 	strdeq	r0, [sp], -fp
+  10:	01010101 	tsteq	r1, r1, lsl #2
+  14:	01000000 	tsteq	r0, r0
+  18:	00010000 	andeq	r0, r1, r0
+  1c:	72617473 	rsbvc	r7, r1, #1929379840	; 0x73000000
+  20:	00532e74 	subseq	r2, r3, r4, ror lr
+  24:	00000000 	andeq	r0, r0, r0
+  28:	00020500 	andeq	r0, r2, r0, lsl #10
+  2c:	16300080 	ldrtne	r0, [r0], -r0, lsl #1
+  30:	2f2f2f2f 	svccs	0x002f2f2f
+  34:	032f2f2f 	teqeq	pc, #188	; 0xbc
+  38:	3030f20d 	eorscc	pc, r0, sp, lsl #4
+  3c:	30303030 	eorscc	r3, r0, r0, lsr r0
+  40:	00020230 	andeq	r0, r2, r0, lsr r2
+  44:	Address 0x00000044 is out of bounds.
+
+Disassembly of section .debug_info:
+
+00000000 <.debug_info>:
+   0:	00000052 	andeq	r0, r0, r2, asr r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	01040000 	tsteq	r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	30008000 	andcc	r8, r0, r0
+  14:	3000805c 	andcc	r8, r0, ip, asr r0
+  18:	72617473 	rsbvc	r7, r1, #1929379840	; 0x73000000
+  1c:	00532e74 	subseq	r2, r3, r4, ror lr
+  20:	6d6f682f 	stclvs	8, cr6, [pc, #-188]!
+  24:	33532f65 	cmpcc	r3, #404	; 0x194
+  28:	4d52412d 	ldfmie	f4, [r2, #-180]
+  2c:	7261702f 	rsbvc	r7, r1, #47	; 0x2f
+  30:	6c2f3174 	stfvss	f3, [pc], #-464
+  34:	b8a0e635 	stmialt	r0!, {r0, r2, r4, r5, r9, sl, sp, lr, pc}
+  38:	e583bfe5 	str	fp, [r3, #4069]
+  3c:	a7e59d88 	strbge	r9, [r5, r8, lsl #27]!
+  40:	968ce58b 	strls	lr, [ip], fp, lsl #11
+  44:	554e4700 	strbpl	r4, [lr, #-1792]
+  48:	20534120 	subscs	r4, r3, r0, lsr #2
+  4c:	38312e32 	ldmdacc	r1!, {r1, r4, r5, r9, sl, fp, sp}
+  50:	0030352e 	eorseq	r3, r0, lr, lsr #10
+  54:	Address 0x00000054 is out of bounds.
+
+Disassembly of section .debug_abbrev:
+
+00000000 <.debug_abbrev>:
+   0:	10001101 	andne	r1, r0, r1, lsl #2
+   4:	12011106 	andne	r1, r1, #-2147483647	; 0x80000001
+   8:	1b080301 	blne	200c14 <_start-0x2fe073ec>
+   c:	13082508 	movwne	r2, #34056	; 0x8508
+  10:	00000005 	andeq	r0, r0, r5
+Disassembly of section .debug_aranges:
+
+00000000 <.debug_aranges>:
+   0:	0000001c 	andeq	r0, r0, ip, lsl r0
+   4:	00000002 	andeq	r0, r0, r2
+   8:	00040000 	andeq	r0, r4, r0
+   c:	00000000 	andeq	r0, r0, r0
+  10:	30008000 	andcc	r8, r0, r0
+  14:	0000005c 	andeq	r0, r0, ip, asr r0
+	...
